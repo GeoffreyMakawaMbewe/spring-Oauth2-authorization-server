@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -73,7 +74,7 @@ public class SecurityConfig {
     }
     //RegisteredClient Bean
     @Bean
-    RegisteredClientRepository registeredClientRepository() {
+    public RegisteredClientRepository registeredClientRepository() {
 
         RegisteredClient RC1 = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("client")
@@ -83,20 +84,20 @@ public class SecurityConfig {
                 .redirectUri("https://springone.io/authorized")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-//                .clientSettings(
-//                        ClientSettings
-//                        .builder()
-//                        .requireAuthorizationConsent(true)
-//                        .build()
-//                )
-//                .tokenSettings(
-//                        TokenSettings
-//                                .builder()
-//                                .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
-//                                .accessTokenTimeToLive(Duration.ofHours(3))
-//                        .build())
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .clientSettings(
+                        ClientSettings
+                        .builder()
+                        .requireAuthorizationConsent(true)
+                        .build()
+                )
+                .tokenSettings(
+                        TokenSettings
+                                .builder()
+                                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                                .accessTokenTimeToLive(Duration.ofHours(3))
+                        .build())
                 .build();
 
         return new InMemoryRegisteredClientRepository(RC1);
@@ -154,4 +155,6 @@ public class SecurityConfig {
 
         return new ImmutableJWKSet<>(jwkSet);
     }
+    //Optionally more customization
+
 }
