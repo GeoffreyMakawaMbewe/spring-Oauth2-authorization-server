@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -44,13 +45,13 @@ public class SecurityConfig {
 
         var user1 = User
                 .withUsername("john")
-                .password(passwordEncoder().encode("12345"))
+                .password("12345")
                 .authorities("read")
                 .build();
 
         var user2 = User
                 .withUsername("bill")
-                .password(passwordEncoder().encode("12345"))
+                .password("12345")
                 .authorities("read")
                 .build();
 
@@ -62,7 +63,7 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(12);
+        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
