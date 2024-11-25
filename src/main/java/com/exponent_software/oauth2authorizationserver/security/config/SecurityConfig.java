@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -80,12 +81,12 @@ public class SecurityConfig {
                 .clientId("client")
                 .clientSecret("secret")
                 .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
+//                .scope(OidcScopes.PROFILE)
                 .redirectUri("https://springone.io/authorized")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .clientSettings(
                         ClientSettings
                         .builder()
@@ -121,8 +122,13 @@ public class SecurityConfig {
     @Order(2)
     SecurityFilterChain oAuthServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
+       // http.httpBasic(Customizer.withDefaults());
         http.formLogin(Customizer.withDefaults());
+        http.authorizeHttpRequests(request -> request.requestMatchers("/well-known/openid-configuration").permitAll()
+        );
         http.authorizeHttpRequests(r -> r.anyRequest().authenticated());
+
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
